@@ -21,6 +21,7 @@ function idYoutube(u) {
 }
 
 function cargarYT() {
+  if (usaArchivo) return;
   const id = idYoutube(CANCION.youtube);
   if (!id) { audioOk = false; return; }
   const tag = document.createElement("script");
@@ -40,8 +41,13 @@ function cargarYT() {
   };
 }
 
+// Si en letra.js se indica "audio" (archivo mp3/mp4), se usa ese archivo en vez de YouTube
+const usaArchivo = !!CANCION.audio;
+const audioArchivo = usaArchivo ? new Audio(CANCION.audio) : null;
+if (audioArchivo) audioArchivo.addEventListener("error", () => { audioOk = false; });
+
 // Interfaz mínima que usa el resto del juego
-const audio = {
+const audio = usaArchivo ? audioArchivo : {
   get currentTime() { return ytListo ? yt.getCurrentTime() : 0; },
   set currentTime(v) { if (ytListo) yt.seekTo(v, true); },
   get ended() { return ytAcabado; },
@@ -299,11 +305,11 @@ el.btnEmpezar.disabled = true;
 el.btnEmpezar.textContent = "Cargando música…";
 cargarYT();
 const espera = setInterval(() => {
-  if (ytListo || !audioOk) {
+  if (ytListo || usaArchivo || !audioOk) {
     clearInterval(espera);
-    if (!audioOk) document.getElementById("reproductor-caja").classList.add("oculto");
+    if (!audioOk || usaArchivo) document.getElementById("reproductor-caja").classList.add("oculto");
     el.btnEmpezar.disabled = false;
     el.btnEmpezar.textContent = "▶ Empezar";
   }
 }, 200);
-setTimeout(() => { if (!ytListo) audioOk = false; }, 6000);
+setTimeout(() => { if (!ytListo && !usaArchivo) audioOk = false; }, 6000);

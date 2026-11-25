@@ -18,6 +18,10 @@
 */
 const CANCION = {
   titulo: "Just the Way You Are",
+  // OPCIÓN A (sin anuncios): pon el archivo de la canción junto a index.html
+  // y escribe su nombre aquí, por ejemplo "cancion.mp3". Si lo usas, ignora youtube.
+  audio: "",
+  // OPCIÓN B: vídeo de YouTube (puede mostrar anuncios que desajusten los tiempos)
   youtube: "https://youtu.be/LjhCEhWiKXk",
   preguntas: [
     { time: 10,  antes: "Every morning I look in the mirror and see my", despues: "smiling back at me", correcta: "face", opciones: ["face", "rain", "shadow", "house"] },
