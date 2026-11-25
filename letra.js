@@ -18,7 +18,7 @@
 */
 const CANCION = {
   titulo: "Just the Way You Are",
-  youtube: "PEGA_AQUI_LA_URL_DE_YOUTUBE",
+  youtube: "https://youtu.be/LjhCEhWiKXk",
   preguntas: [
     { time: 10,  antes: "Every morning I look in the mirror and see my", despues: "smiling back at me", correcta: "face", opciones: ["face", "rain", "shadow", "house"] },
     { time: 22,  antes: "No matter how far I run, I always come back to the same", despues: "", correcta: "place", opciones: ["river", "place", "train", "sky"] },
