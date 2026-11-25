@@ -1,0 +1,142 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #000; font-family: "Segoe UI", system-ui, sans-serif; color: #fff; }
+
+#juego {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  overflow: hidden;
+  /* Guarda la imagen del estudio como "estudio.jpg" junto a este archivo */
+  background: url("estudio.jpg") center / cover no-repeat, #2a1a10;
+}
+/* Capa oscura para que se lea la letra */
+.capa {
+  position: absolute; inset: 0;
+  background: linear-gradient(rgba(10,6,3,.55), rgba(10,6,3,.72));
+  backdrop-filter: blur(2px);
+  z-index: 0;
+}
+#juego > *:not(.capa) { position: relative; z-index: 1; }
+
+.hud {
+  width: 100%; max-width: 900px;
+  display: flex; justify-content: space-between;
+  font-size: .95rem; opacity: .85; letter-spacing: .05em;
+}
+
+.oculto { display: none !important; }
+
+/* Mini reproductor de YouTube (esquina superior derecha) */
+#reproductor-caja {
+  position: absolute !important; top: 48px; right: 20px;
+  width: 200px; height: 113px; z-index: 2;
+  border-radius: 10px; overflow: hidden;
+  border: 2px solid rgba(255,213,74,.6);
+  box-shadow: 0 4px 16px rgba(0,0,0,.6);
+  pointer-events: none;   /* se controla solo desde el juego */
+}
+#reproductor-caja iframe { width: 100%; height: 100%; }
+@media (max-width: 700px) { #reproductor-caja { width: 120px; height: 68px; top: 40px; right: 10px; } }
+
+.pantalla { text-align: center; max-width: 560px; margin: auto; }
+.pantalla h1 { font-size: 3rem; margin-bottom: 12px; color: #ffd54a; text-shadow: 0 3px 12px #000; }
+.pantalla h2 { font-size: 2.2rem; margin-bottom: 12px; color: #ffd54a; }
+.pantalla p { font-size: 1.15rem; line-height: 1.6; margin-bottom: 24px; }
+
+.btn-grande {
+  font-size: 1.2rem; padding: 14px 34px; border: 0; border-radius: 40px;
+  background: #ffd54a; color: #2b1b08; font-weight: 700; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,.5); transition: transform .15s;
+}
+.btn-grande:hover { transform: scale(1.06); }
+
+/* Caja de letra */
+#caja-letra {
+  width: 100%; max-width: 900px; margin: auto;
+  padding: 28px 24px;
+  background: rgba(15, 9, 4, .72);
+  border: 2px solid rgba(255, 213, 74, .6);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.6);
+  text-align: center;
+}
+#frase { font-size: clamp(1.4rem, 3.6vw, 2.4rem); line-height: 1.5; margin-bottom: 26px; text-shadow: 0 2px 6px #000; }
+#hueco {
+  display: inline-block; min-width: 4ch; padding: 0 10px;
+  border-bottom: 4px solid #ffd54a; color: #ffd54a; font-weight: 700;
+  transition: color .2s, border-color .2s;
+}
+#hueco.ok  { color: #6ee07a; border-color: #6ee07a; }
+#hueco.mal { color: #ff6b5e; border-color: #ff6b5e; }
+
+#opciones { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (min-width: 700px) { #opciones { grid-template-columns: repeat(4, 1fr); } }
+
+.opcion {
+  font-size: 1.2rem; padding: 14px 10px; border-radius: 12px; cursor: pointer;
+  background: rgba(255,255,255,.12); color: #fff; font-weight: 600;
+  border: 2px solid rgba(255,255,255,.35);
+  transition: background .15s, transform .15s, border-color .15s;
+}
+.opcion:hover:not(:disabled) { background: rgba(255,213,74,.3); transform: translateY(-3px); }
+.opcion:disabled { cursor: default; opacity: .6; }
+.opcion.correcta { background: #2e9e4a; border-color: #6ee07a; opacity: 1; animation: salto .5s; }
+.opcion.incorrecta { background: #b3372c; border-color: #ff6b5e; opacity: 1; animation: temblor .45s; }
+
+#mensaje { min-height: 1.6em; margin-top: 18px; font-size: 1.25rem; font-weight: 700; }
+#mensaje.ok  { color: #6ee07a; }
+#mensaje.mal { color: #ff6b5e; }
+
+@keyframes salto { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+@keyframes temblor { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
+
+/* Barra inferior */
+#barra {
+  width: 100%; max-width: 900px;
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(15, 9, 4, .72);
+  border-radius: 40px; padding: 10px 22px;
+  border: 2px solid rgba(255,255,255,.2);
+}
+.marcador { display: flex; align-items: center; gap: 6px; font-size: 1.3rem; }
+.icono { width: 36px; height: 36px; }
+#pista { flex: 1; position: relative; height: 56px; }
+#carril { position: absolute; inset: 0; }
+
+#carril .segmento, #carril .cabeza { position: absolute; will-change: transform; }
+.item-comida { position: absolute; width: 38px; height: 38px; top: 9px; transition: transform .35s, opacity .35s; }
+.item-comida.comida { transform: scale(0); opacity: 0; }
+
+/* Nombre del jugador y clasificación */
+#nombre {
+  display: block; margin: 0 auto 20px; width: 100%; max-width: 320px;
+  font-size: 1.2rem; padding: 12px 18px; border-radius: 40px; text-align: center;
+  border: 2px solid rgba(255,213,74,.7); background: rgba(15,9,4,.75); color: #fff; outline: none;
+}
+#nombre:focus { border-color: #ffd54a; box-shadow: 0 0 0 3px rgba(255,213,74,.3); }
+#nombre.error { border-color: #ff6b5e; animation: temblor .45s; }
+
+#final h3 { font-size: 1.4rem; margin: 6px 0 10px; color: #ffd54a; }
+#ranking {
+  list-style: none; counter-reset: pos; text-align: left;
+  max-height: 220px; overflow-y: auto; margin: 0 auto 22px; max-width: 420px;
+  background: rgba(15,9,4,.72); border-radius: 14px; padding: 8px 14px;
+  border: 2px solid rgba(255,213,74,.4);
+}
+#ranking li {
+  counter-increment: pos; display: flex; justify-content: space-between; gap: 12px;
+  padding: 7px 4px; border-bottom: 1px solid rgba(255,255,255,.12); font-size: 1.05rem;
+}
+#ranking li:last-child { border-bottom: 0; }
+#ranking li::before { content: counter(pos) "."; width: 2ch; color: #ffd54a; font-weight: 700; }
+#ranking li .n { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#ranking li .p { font-weight: 700; }
+#ranking li.yo { background: rgba(255,213,74,.22); border-radius: 8px; }
+.btn-chico {
+  display: block; margin: 14px auto 0; background: none; border: 0; color: #ccc;
+  text-decoration: underline; cursor: pointer; font-size: .9rem;
+}
